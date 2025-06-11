@@ -75,7 +75,7 @@ const Index = () => {
               <span className="text-2xl">🛵</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold">Swiggy <> Tezz</h1>
+              <h1 className="text-xl font-bold">Swiggy &lt;&gt; Tezz</h1>
               <p className="text-orange-100 text-sm">Customer Support</p>
             </div>
           </div>
