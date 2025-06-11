@@ -1,15 +1,17 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ChatMessage } from '@/components/ChatMessage';
 import { QuickActions } from '@/components/QuickActions';
 import { ChatInput } from '@/components/ChatInput';
 import { processMessage } from '@/utils/chatbotLogic';
 import { MessageType } from '@/types/chatTypes';
+import { Phone, Mail } from 'lucide-react';
 
 const Index = () => {
   const [messages, setMessages] = useState<MessageType[]>([
     {
       id: '1',
-      text: "Hi! I'm SwiggyBot 🤖 Welcome to Swiggy Instant Delivery Customer Support! How can I help you today?",
+      text: "Hi! I'm SwiggyBot 🤖 Welcome to Swiggy <> Tezz Customer Support! How can I help you today?",
       sender: 'bot',
       timestamp: new Date(),
     }
@@ -73,11 +75,19 @@ const Index = () => {
               <span className="text-2xl">🛵</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold">SwiggyBot Support</h1>
-              <p className="text-orange-100 text-sm">Instant Delivery Help</p>
+              <h1 className="text-xl font-bold">Swiggy <> Tezz</h1>
+              <p className="text-orange-100 text-sm">Customer Support</p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 text-sm">
+              <Phone size={16} />
+              <span>1800-123-SWIGGY</span>
+            </div>
+            <div className="flex items-center space-x-2 text-sm">
+              <Mail size={16} />
+              <span>support@swiggy.com</span>
+            </div>
             <button
               onClick={() => setUserRole(userRole === 'customer' ? 'internal' : 'customer')}
               className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium hover:bg-white/30 transition-colors"

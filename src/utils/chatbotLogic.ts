@@ -1,5 +1,7 @@
-
 import { UserRole } from '@/types/chatTypes';
+import { getProductBySku, getProductList, Product } from '@/data/products';
+
+let selectedProducts: { product: Product; quantity: number }[] = [];
 
 export const processMessage = (message: string, userRole: UserRole): string => {
   const lowerMessage = message.toLowerCase();
@@ -13,12 +15,87 @@ export const processMessage = (message: string, userRole: UserRole): string => {
     return "📦 To track your order, please provide your Order ID (6-8 digit number). You can find it in your order confirmation SMS or email.";
   }
 
-  // Inventory queries
-  if (lowerMessage.includes('stock') || lowerMessage.includes('available') || lowerMessage.includes('inventory')) {
-    if (/\b[a-zA-Z0-9]{3,}\b/.test(message) && (lowerMessage.includes('sku') || lowerMessage.includes('product'))) {
-      return "✅ Product Status:\n\n📦 In Stock: 45 units\n🏪 Warehouse: Central Delhi\n⚡ Instant Delivery: Available\n🕒 Estimated Delivery: 10-15 minutes\n\nWould you like to place an order?";
+  // Delivery status
+  if (lowerMessage.includes('delivery status')) {
+    return "🚚 Current Delivery Status:\n\n📦 Active Orders: 2\n🛵 Order #123456 - Out for delivery (ETA: 5 mins)\n🍳 Order #123457 - Being prepared (ETA: 15 mins)\n\n📍 Track live location in the Swiggy app\n📞 Contact delivery partner: +91 98765-43210";
+  }
+
+  // Payment status and history
+  if (lowerMessage.includes('payment status') || lowerMessage.includes('payment history')) {
+    if (lowerMessage.includes('history')) {
+      return "📊 Payment History (Last 5 transactions):\n\n💳 12/06/2025 - ₹245 - Order #123456 - Success\n💳 11/06/2025 - ₹180 - Order #123455 - Success\n💳 10/06/2025 - ₹320 - Order #123454 - Success\n💳 09/06/2025 - ₹95 - Order #123453 - Success\n💳 08/06/2025 - ₹150 - Order #123452 - Success\n\n💰 Total spent this month: ₹990\n🎯 You've saved ₹125 with offers!";
     }
-    return "📋 Please provide the Product SKU or item name to check availability. Example: 'Check stock for SKU ABC123' or 'Is Maggi available?'";
+    return "💳 Payment Status:\n\n✅ Last Payment: ₹245 - Success\n🔄 Pending Refunds: None\n💰 Wallet Balance: ₹50\n💸 Active Offers: 3\n\n📱 Payment Methods:\n• UPI: *****@paytm (Primary)\n• Card: ****1234\n• Wallet: ₹50";
+  }
+
+  // Inventory queries with enhanced functionality
+  if (lowerMessage.includes('stock') || lowerMessage.includes('available') || lowerMessage.includes('inventory') || lowerMessage.includes('check item')) {
+    // Check if user wants to see the product list
+    if (lowerMessage.includes('list') || lowerMessage.includes('show') || (!lowerMessage.includes('sku') && !(/\b[a-zA-Z0-9]{6}\b/.test(message)))) {
+      return `📋 Available Products:\n\n${getProductList()}\n\n💡 To check stock for a specific item, type: "Check SKU001" or "Stock for SKU001"\n🛒 To add items to cart, type: "Add 2 SKU001" (quantity + SKU)`;
+    }
+    
+    // Check if user is adding items with quantity
+    const addMatch = message.match(/add\s+(\d+)\s+(sku\d+)/i);
+    if (addMatch) {
+      const quantity = parseInt(addMatch[1]);
+      const sku = addMatch[2].toUpperCase();
+      const product = getProductBySku(sku);
+      
+      if (product) {
+        if (quantity <= product.stock) {
+          const existingItem = selectedProducts.find(item => item.product.sku === sku);
+          if (existingItem) {
+            existingItem.quantity += quantity;
+          } else {
+            selectedProducts.push({ product, quantity });
+          }
+          
+          const total = selectedProducts.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+          const itemsList = selectedProducts.map(item => 
+            `${item.quantity}x ${item.product.name} - ₹${item.product.price * item.quantity}`
+          ).join('\n');
+          
+          return `✅ Added ${quantity}x ${product.name} to cart!\n\n🛒 Cart Items:\n${itemsList}\n\n💰 Total: ₹${total}\n\n📦 Type "checkout" to proceed or add more items!`;
+        } else {
+          return `❌ Sorry! Only ${product.stock} units of ${product.name} available in stock.`;
+        }
+      } else {
+        return `❌ Product with SKU ${sku} not found. Please check the product list.`;
+      }
+    }
+    
+    // Check specific SKU
+    const skuMatch = message.match(/\b(sku\d+)\b/i);
+    if (skuMatch) {
+      const sku = skuMatch[1].toUpperCase();
+      const product = getProductBySku(sku);
+      
+      if (product) {
+        return `✅ Product Details:\n\n📦 ${product.name}\n💰 Price: ₹${product.price}\n📊 Stock: ${product.stock} units available\n⚡ Instant Delivery: Available\n🕒 Estimated Delivery: 10-15 minutes\n\n🛒 To add to cart, type: "Add 2 ${product.sku}" (quantity + SKU)`;
+      } else {
+        return `❌ Product with SKU ${sku} not found. Type "show products" to see available items.`;
+      }
+    }
+    
+    return `📋 Stock Check Options:\n\n1️⃣ Type "show products" - See all available items\n2️⃣ Type "Check SKU001" - Check specific item\n3️⃣ Type "Add 2 SKU001" - Add items to cart\n\nExample: "Check SKU001" or "Add 3 SKU002"`;
+  }
+
+  // Checkout functionality
+  if (lowerMessage.includes('checkout') || lowerMessage.includes('total')) {
+    if (selectedProducts.length === 0) {
+      return "🛒 Your cart is empty! Add some items first by typing 'Add quantity SKU' (e.g., 'Add 2 SKU001')";
+    }
+    
+    const total = selectedProducts.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+    const itemsList = selectedProducts.map(item => 
+      `${item.quantity}x ${item.product.name} - ₹${item.product.price * item.quantity}`
+    ).join('\n');
+    
+    // Clear cart after showing total
+    selectedProducts = [];
+    
+    return `🧾 Order Summary:\n\n${itemsList}\n\n💰 Subtotal: ₹${total}\n🚚 Delivery: Free\n🎯 Discount: -₹${Math.floor(total * 0.1)}\n\n💳 Total: ₹${total - Math.floor(total * 0.1)}\n\n✅ Order placed successfully!\n📱 You'll receive confirmation shortly.`;
   }
 
   // Invoice support

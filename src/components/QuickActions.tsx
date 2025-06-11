@@ -10,6 +10,9 @@ interface QuickActionsProps {
 export const QuickActions: React.FC<QuickActionsProps> = ({ onQuickAction, userRole }) => {
   const customerActions: QuickActionType[] = [
     { text: 'Track Order', action: 'I want to track my order', icon: '📦' },
+    { text: 'Delivery Status', action: 'Check my delivery status', icon: '🚚' },
+    { text: 'Payment Status', action: 'Check my payment status', icon: '💳' },
+    { text: 'Payment History', action: 'Show my payment history', icon: '📊' },
     { text: 'Check Item Stock', action: 'Check if item is available', icon: '📋' },
     { text: 'Get Invoice', action: 'I need my invoice', icon: '🧾' },
     { text: 'Business Hours', action: 'What are your business hours?', icon: '🕒' },
