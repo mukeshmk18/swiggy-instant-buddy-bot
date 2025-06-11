@@ -1,3 +1,4 @@
+
 import { UserRole } from '@/types/chatTypes';
 import { getProductBySku, getProductList, Product } from '@/data/products';
 
@@ -120,7 +121,7 @@ export const processMessage = (message: string, userRole: UserRole): string => {
     }
     
     if (lowerMessage.includes('sales') || lowerMessage.includes('report')) {
-      return "📊 Sales Dashboard (Today):\n\n💰 Revenue: ₹2,45,670\n📦 Orders: 1,247\n⚡ Avg Delivery: 12 minutes\n⭐ Rating: 4.6/5\n\n🔥 Top Categories:\n1. Groceries (35%)\n2. Snacks (28%)\n3. Beverages (22%)\n4. Personal Care (15%)";
+      return "📊 Sales Dashboard - Real-time Analytics\n\n⏱️ HOURLY METRICS (Current Hour):\n💰 Sales: ₹12,340\n📦 Orders: 45\n📍 Active Outlets: 8\n\n📅 DAILY METRICS (Today):\n💰 Total Sales: ₹2,45,670\n📦 Orders Processed: 1,247\n🏪 Billed Outlets: 156\n⚡ Avg Delivery Time: 12 mins\n💳 Average Order Value: ₹197\n\n📊 MONTHLY METRICS (June 2025):\n💰 Total Revenue: ₹68,45,230\n📦 Total Orders: 34,890\n🏪 Unique Outlets Served: 2,340\n📈 Growth vs Last Month: +23%\n\n🔄 RETAILER INSIGHTS:\n📊 Ordering Frequency:\n  • Daily Orders: 67% of retailers\n  • Weekly Orders: 28% of retailers\n  • Monthly Orders: 5% of retailers\n\n🎯 TOP PERFORMING CATEGORIES:\n1. Groceries: 35% (₹85,580)\n2. Snacks: 28% (₹68,788)\n3. Beverages: 22% (₹54,047)\n4. Personal Care: 15% (₹36,855)\n\n⭐ Customer Satisfaction: 4.6/5\n🚚 On-time Delivery Rate: 94.2%";
     }
   }
 
