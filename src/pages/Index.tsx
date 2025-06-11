@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ChatMessage } from '@/components/ChatMessage';
 import { QuickActions } from '@/components/QuickActions';
@@ -59,6 +58,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+      {/* Team Name */}
+      <div className="bg-white border-b border-gray-200 py-2">
+        <div className="max-w-4xl mx-auto px-4">
+          <p className="text-center text-sm font-medium text-gray-600">Team Bighnesh</p>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -83,7 +89,7 @@ const Index = () => {
       </div>
 
       {/* Chat Container */}
-      <div className="max-w-4xl mx-auto p-4 h-[calc(100vh-80px)] flex flex-col">
+      <div className="max-w-4xl mx-auto p-4 h-[calc(100vh-120px)] flex flex-col">
         {/* Messages Area */}
         <div className="flex-1 bg-white rounded-lg shadow-lg overflow-hidden mb-4">
           <div className="h-full flex flex-col">
